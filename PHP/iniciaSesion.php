@@ -2,7 +2,7 @@
 require_once "funciones.php";
 if($_SERVER["REQUEST_METHOD"] == "POST")
 {
-    $usu = comprobarUsuario($_POST['usuario'], $_POST['clave']);
+    $usu = comprobar_usuario($_POST['usuario'], $_POST['clave']);
     if($usu === false)
     {
         $err = true;
@@ -15,11 +15,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST")
         if($_SESSION['usuario']['profesor'])
         {
             headre("Location: index.php");
+            exit;
         }
         else 
 		{
 			$_SESSION[''] = [];
 			header("Location: index.php");
+            exit;
 		}
 		return;
     }
@@ -33,7 +35,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST")
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title> Formulario de Acceso </title>    
-        <link rel="stylesheet" href="css/sesion.css"> 
+        <link rel="stylesheet" href="../css/sesion.css"> 
     </head>
     <body>
         
@@ -45,12 +47,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST")
                     </div>
                     <form id="loginform">
                         <input type="text" name="usuario" placeholder="Usuario" required>
-                        <input type="password" placeholder="Contraseña" name="password" required>
+                        <input type="clave" placeholder="Contraseña" name="password" required>
                         <button type="submit" title="Ingresar" name="Ingresar">Inicia Sesión</button>
                     </form>
                     <div class="pie-form">
                         <a href="#">¿Perdiste tu contraseña?</a>
-                        <a href="#">¿No tienes Cuenta? Registrate</a>
+                        <a href="registrarse.php">¿No tienes Cuenta? Registrate</a>
                     </div>
                 </div>
                 <div class="inferior">

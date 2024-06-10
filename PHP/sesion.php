@@ -1,7 +1,11 @@
 <?php
-function comprobar_sesion(){
+function comprobar_sesion()
+{
 	session_start();
-	if(!isset($_SESSION['usuario'])){	
-		header("Location: login.php?redirigido=true");
-	}		
+	if(!isset($_SESSION['usuario']))
+	{
+		header("Location: iniciaSesion.php?redirigido=true");
+		exit;
+	}
 }
+?>
