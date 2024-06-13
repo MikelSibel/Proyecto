@@ -1,11 +1,12 @@
 <?php
-function comprobar_sesion()
-{
-	session_start();
-	if(!isset($_SESSION['usuario']))
-	{
-		header("Location: iniciaSesion.php?redirigido=true");
-		exit;
-	}
+function comprobar_sesion() {
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+    
+    if (!isset($_SESSION['usuario']) || empty($_SESSION['usuario'])) {
+        header("Location: iniciaSesion.php");
+        exit;
+    }
 }
 ?>

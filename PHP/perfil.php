@@ -1,25 +1,61 @@
-<?php 
-include 'PHP/conexion.php'; 
-include 'PHP/sesion.php'; 
-
+<?php
+include 'sesion.php';
+include 'conexion.php'; 
 comprobar_sesion();
 
 $username = isset($_SESSION['usuario']['nombre_usuario']) ? $_SESSION['usuario']['nombre_usuario'] : '';
 
 if (empty($username)) {
-    header("Location: /Proyecto/PHP/iniciaSesion.php");
+    header("Location: iniciaSesion.php");
     exit;
 }
+
+
+$sql = "SELECT * FROM ALUMNOS WHERE Nombre_User = ?";
+$stmt = $conexion->prepare($sql);
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $nombre = htmlspecialchars($row['Nombre'], ENT_QUOTES, 'UTF-8');
+    $apellido1 = htmlspecialchars($row['Apellido_1'], ENT_QUOTES, 'UTF-8');
+    $apellido2 = htmlspecialchars($row['Apellido_2'], ENT_QUOTES, 'UTF-8');
+    $telefono = htmlspecialchars($row['Tel'], ENT_QUOTES, 'UTF-8');
+    $estado = htmlspecialchars($row['Estado'], ENT_QUOTES, 'UTF-8');
+    $foto = htmlspecialchars($row['Foto'], ENT_QUOTES, 'UTF-8'); // Obtener la ruta de la foto de perfil
+    
+} else {
+    
+    $nombre = 'Nombre no encontrado';
+    $apellido1 = '';
+    $apellido2 = '';
+    $telefono = '';
+    $estado = '';
+    $foto = ''; 
+}
+$stmt->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $username ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : 'Ofertas'; ?></title>
+    <title><?php echo $nombre ? $nombre : 'Perfil'; ?></title>
+    <link href="../CSS/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="/Proyecto/CSS/style.css">
+    <style>
+        .perfil-img {
+            width: 150px; 
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%; 
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -61,34 +97,32 @@ if (empty($username)) {
     </div>
 </nav>
 
-
 <div class="container mt-5">
-  <h1>Ofertas</h1>
-  <div id="ofertas" class="row">
-    <?php
-    $sql = "SELECT * FROM OFERTAS";
-    $result = mysqli_query($conexion, $sql);
+    <h1><?php echo $nombre ? $nombre : 'Perfil'; ?></h1>
+    <ul>
+        <li><strong>Nombre:</strong> <?php echo $nombre; ?></li>
+        <li><strong>Apellido 1:</strong> <?php echo $apellido1; ?></li>
+        <li><strong>Apellido 2:</strong> <?php echo $apellido2; ?></li>
+        <li><strong>Teléfono:</strong> <?php echo $telefono; ?></li>
+        <li><strong>Estado:</strong> <?php echo $estado; ?></li>
+    </ul>
 
-    if (mysqli_num_rows($result) > 0) {
-        while($row = mysqli_fetch_assoc($result)) {
-            echo "<div class='col-md-4'>";
-            echo "<div class='card mb-4'>";
-            echo "<div class='card-body'>";
-            echo "<h5 class='card-title'>" . htmlspecialchars($row["Nombre"], ENT_QUOTES, 'UTF-8') . "</h5>";
-            echo "<p class='card-text'>" . htmlspecialchars($row["Descripcion"], ENT_QUOTES, 'UTF-8') . "</p>";
-            echo "<p class='card-text'><strong>Precio:</strong> $" . htmlspecialchars($row["Salario"], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($row["Moneda"], ENT_QUOTES, 'UTF-8') . "</p>";
-            echo "<a href='/Proyecto/PHP/oferta.php?id=" . $row["CodOf"] . "' class='btn btn-primary'>Ver oferta</a>";
-            echo "</div>";
-            echo "</div>";
-            echo "</div>";
-        }
-    } else {
-        echo "0 resultados";
-    }
-    ?>
-  </div>
+    <?php if ($foto): ?>
+    <img src="<?php echo $foto; ?>" alt="Foto de perfil" class="perfil-img">
+    <?php else: ?>
+    <p>No se ha cargado una foto de perfil.</p>
+    <?php endif; ?>
+
+    <form action="cambiarFoto.php" method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="fotoPerfil" class="form-label">Cambiar Foto de Perfil</label>
+            <input class="form-control" type="file" id="fotoPerfil" name="fotoPerfil">
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    </form>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+UJ0ZXaVgIKUR3M6ZPj0OdyaIlTg1" crossorigin="anonymous"></script>
+<script src="../JS/script.js"></script>
 </body>
 </html>

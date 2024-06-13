@@ -1,65 +1,78 @@
 <?php
 require_once "funciones.php";
-if($_SERVER["REQUEST_METHOD"] == "POST")
+
+$error_message = '';
+if (isset($_GET['error'])) 
 {
-    $usu = comprobar_usuario($_POST['usuario'], $_POST['clave']);
-    if($usu === false)
+    if ($_GET['error'] === 'login_failed') 
     {
-        $err = true;
-        $usuario = $_POST['usuario'];
-    }
-    else
+        $error_message = 'El usuario o la contraseña son incorrectos. Por favor, inténtalo de nuevo.';
+    } 
+    else 
     {
-        session_start();
-        $_SESSION['usuario'] = $usu;
-        if($_SESSION['usuario']['profesor'])
-        {
-            headre("Location: index.php");
-            exit;
-        }
-        else 
-		{
-			$_SESSION[''] = [];
-			header("Location: index.php");
-            exit;
-		}
-		return;
+        $error_message = 'Hubo un error desconocido. Por favor, inténtalo de nuevo más tarde.';
     }
 }
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") 
+{
+    $usu = comprobarUsuario($_POST['usuario'], $_POST['password']);
+    if ($usu === false) 
+    {
+        header("Location: iniciaSesion.php?error=login_failed");
+        exit;
+    } 
+    else 
+    {
+        if (session_status() == PHP_SESSION_NONE) 
+        {
+            session_start();
+        }
+        
+        $_SESSION['usuario'] = [
+            'nombre' => $usu['Nombre'],
+            'nombre_usuario' => $usu['Nombre_User']
+        ];
+        header("Location: ../index.php");
+        exit;
+    }
+}
 ?>
 <!doctype html>
 <html lang="es">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title> Formulario de Acceso </title>    
-        <link rel="stylesheet" href="../css/sesion.css"> 
-    </head>
-    <body>
-        
-        <div id="contenedor">
-            <div id="central">
-                <div id="login">
-                    <div class="titulo">
-                        Bienvenido
-                    </div>
-                    <form id="loginform">
-                        <input type="text" name="usuario" placeholder="Usuario" required>
-                        <input type="clave" placeholder="Contraseña" name="password" required>
-                        <button type="submit" title="Ingresar" name="Ingresar">Inicia Sesión</button>
-                    </form>
-                    <div class="pie-form">
-                        <a href="#">¿Perdiste tu contraseña?</a>
-                        <a href="registrarse.php">¿No tienes Cuenta? Registrate</a>
-                    </div>
-                </div>
-                <div class="inferior">
-                    <a href="index.php">Volver</a>
-                </div>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Acceso</title>
+    <link rel="stylesheet" href="../CSS/sesion.css">
+</head>
+<body>
+<div id="contenedor">
+    <div id="central">
+        <div id="login">
+            <div class="titulo">
+                Bienvenido
+            </div>
+            <?php if (!empty($error_message)): ?>
+            <div class="alert alert-danger" role="alert">
+                <?php echo $error_message; ?>
+            </div>
+            <?php endif; ?>
+            <form id="loginform" method="post">
+                <input type="text" name="usuario" placeholder="Usuario" required>
+                <input type="password" name="password" placeholder="Contraseña" required>
+                <button type="submit" title="Ingresar" name="submit">Inicia Sesión</button>
+            </form>
+            <div class="pie-form">
+                <a href="#">¿Perdiste tu contraseña?</a>
+                <a href="registrarse.php">¿No tienes Cuenta? Registrate</a>
             </div>
         </div>
-            
-    </body>
+        <div class="inferior">
+            <a href="../index.php">Volver</a>
+        </div>
+    </div>
+</div>
+</body>
 </html>

@@ -1,25 +1,42 @@
-<?php 
-include 'PHP/conexion.php'; 
-include 'PHP/sesion.php'; 
+<?php
+include 'conexion.php';
+include 'sesion.php';
 
 comprobar_sesion();
 
-$username = isset($_SESSION['usuario']['nombre_usuario']) ? $_SESSION['usuario']['nombre_usuario'] : '';
+$username = isset($_SESSION['usuario']['nombre_usuario']) ? $_SESSION['usuario']['nombre_usuario'] : null;
 
-if (empty($username)) {
-    header("Location: /Proyecto/PHP/iniciaSesion.php");
+if (isset($_GET['id'])) 
+{
+    $id_oferta = $_GET['id'];
+
+    $sql = "SELECT * FROM OFERTAS WHERE CodOf = $id_oferta";
+    $result = mysqli_query($conexion, $sql);
+
+    if ($result && mysqli_num_rows($result) > 0) 
+    {
+        $oferta = mysqli_fetch_assoc($result);
+    } 
+    else 
+    {
+        echo "La oferta no existe.";
+        exit;
+    }
+} else {
+    echo "ID de oferta no especificado.";
     exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $username ? htmlspecialchars($username, ENT_QUOTES, 'UTF-8') : 'Ofertas'; ?></title>
+    <title><?php echo $oferta['Nombre']; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="/Proyecto/CSS/style.css">
+    <link rel="stylesheet" href="/Proyecto/CSS/style.css"> 
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -63,29 +80,22 @@ if (empty($username)) {
 
 
 <div class="container mt-5">
-  <h1>Ofertas</h1>
-  <div id="ofertas" class="row">
-    <?php
-    $sql = "SELECT * FROM OFERTAS";
-    $result = mysqli_query($conexion, $sql);
-
-    if (mysqli_num_rows($result) > 0) {
-        while($row = mysqli_fetch_assoc($result)) {
-            echo "<div class='col-md-4'>";
-            echo "<div class='card mb-4'>";
-            echo "<div class='card-body'>";
-            echo "<h5 class='card-title'>" . htmlspecialchars($row["Nombre"], ENT_QUOTES, 'UTF-8') . "</h5>";
-            echo "<p class='card-text'>" . htmlspecialchars($row["Descripcion"], ENT_QUOTES, 'UTF-8') . "</p>";
-            echo "<p class='card-text'><strong>Precio:</strong> $" . htmlspecialchars($row["Salario"], ENT_QUOTES, 'UTF-8') . " " . htmlspecialchars($row["Moneda"], ENT_QUOTES, 'UTF-8') . "</p>";
-            echo "<a href='/Proyecto/PHP/oferta.php?id=" . $row["CodOf"] . "' class='btn btn-primary'>Ver oferta</a>";
-            echo "</div>";
-            echo "</div>";
-            echo "</div>";
-        }
-    } else {
-        echo "0 resultados";
-    }
-    ?>
+  <div class="card">
+    <div class="card-header">
+      Detalles de la oferta
+    </div>
+    <div class="card-body">
+      <h5 class="card-title"><?php echo $oferta['Nombre']; ?></h5>
+      <p class="card-text"><strong>Modalidad:</strong> <?php echo $oferta['Modalidad']; ?></p>
+      <p class="card-text"><strong>Horario:</strong> <?php echo $oferta['Horario']; ?></p>
+      <p class="card-text"><strong>Ubicación:</strong> <?php echo $oferta['Ubicacion']; ?></p>
+      <p class="card-text"><strong>Nivel educativo requerido:</strong> <?php echo $oferta['Niv_Educ']; ?></p>
+      <p class="card-text"><strong>Salario:</strong> <?php echo '$' . number_format($oferta['Salario'], 2) . ' ' . $oferta['Moneda']; ?></p>
+      <p class="card-text"><strong>Empresa:</strong> <?php echo $oferta['Empresa']; ?></p>
+      <p class="card-text"><strong>Idioma:</strong> <?php echo $oferta['Idioma_Of']; ?></p>
+      <p class="card-text"><strong>Experiencia requerida:</strong> <?php echo $oferta['Ex_Re']; ?></p>
+      <p class="card-text"><strong>Descripción:</strong> <?php echo $oferta['Descripcion']; ?></p>
+    </div>
   </div>
 </div>
 
