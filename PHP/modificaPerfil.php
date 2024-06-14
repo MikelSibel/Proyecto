@@ -10,17 +10,13 @@ if (empty($username)) {
     exit;
 }
 
-$nombre = '';
-$apellido1 = '';
-$apellido2 = '';
 $telefono = '';
-$correo = '';
 $estado = '';
+$foto = '';
+$esAlumno = false; // Variable para determinar si es alumno
 
-// Consulta para obtener datos del alumno
-$sqlAlumno = "SELECT Nombre, Apellido_1, Apellido_2, Tel, Correo_elec, Estado 
-              FROM ALUMNOS 
-              WHERE Nombre_User = ?";
+// Verificar si es alumno
+$sqlAlumno = "SELECT Tel, Estado, Foto FROM ALUMNOS WHERE Nombre_User = ?";
 $stmtAlumno = $conexion->prepare($sqlAlumno);
 $stmtAlumno->bind_param("s", $username);
 $stmtAlumno->execute();
@@ -28,71 +24,72 @@ $resultAlumno = $stmtAlumno->get_result();
 
 if ($resultAlumno->num_rows > 0) {
     $row = $resultAlumno->fetch_assoc();
-    $nombre = htmlspecialchars($row['Nombre'], ENT_QUOTES, 'UTF-8');
-    $apellido1 = htmlspecialchars($row['Apellido_1'], ENT_QUOTES, 'UTF-8');
-    $apellido2 = htmlspecialchars($row['Apellido_2'], ENT_QUOTES, 'UTF-8');
     $telefono = htmlspecialchars($row['Tel'], ENT_QUOTES, 'UTF-8');
-    $correo = htmlspecialchars($row['Correo_elec'], ENT_QUOTES, 'UTF-8');
     $estado = htmlspecialchars($row['Estado'], ENT_QUOTES, 'UTF-8');
+    $foto = htmlspecialchars($row['Foto'], ENT_QUOTES, 'UTF-8');
+    $esAlumno = true; // Marcar como alumno encontrado
     $stmtAlumno->close();
-} else {
-    // Si no es alumno, verificar si es profesor u otro tipo de usuario
-    $sqlProfesor = "SELECT Nombre, Apellido_1, Apellido_2, Tel, Correo_elec 
-                    FROM PROFESORES 
-                    WHERE Nombre_User = ?";
+}
+
+// Si no es alumno, verificar si es profesor
+if (!$esAlumno) {
+    $sqlProfesor = "SELECT Tel, Foto FROM PROFESORES WHERE Nombre_User = ?";
     $stmtProfesor = $conexion->prepare($sqlProfesor);
-    if (!$stmtProfesor) {
-        die('Error en la preparación de la consulta: ' . $conexion->error);
-    }
     $stmtProfesor->bind_param("s", $username);
     $stmtProfesor->execute();
     $resultProfesor = $stmtProfesor->get_result();
 
     if ($resultProfesor->num_rows > 0) {
         $row = $resultProfesor->fetch_assoc();
-        $nombre = htmlspecialchars($row['Nombre'], ENT_QUOTES, 'UTF-8');
-        $apellido1 = htmlspecialchars($row['Apellido_1'], ENT_QUOTES, 'UTF-8');
-        $apellido2 = htmlspecialchars($row['Apellido_2'], ENT_QUOTES, 'UTF-8');
         $telefono = htmlspecialchars($row['Tel'], ENT_QUOTES, 'UTF-8');
-        $correo = htmlspecialchars($row['Correo_elec'], ENT_QUOTES, 'UTF-8');
-        // No hay columna 'Estado' en la tabla PROFESORES
-        // $estado se deja vacío o se maneja de otra manera según sea necesario
-        $estado = ''; // O puedes manejarlo según tu lógica de negocio
-        $stmtProfesor->close();
+        $foto = htmlspecialchars($row['Foto'], ENT_QUOTES, 'UTF-8');
+    }
+    $stmtProfesor->close();
+}
+
+// Procesar la actualización de datos si se envió el formulario
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Verificar si se envió un archivo de foto
+    if (!empty($_FILES['fotoPerfil']['name'])) {
+        include 'cambiarFoto.php'; // Incluir el código de cambiarFoto.php para procesar la subida de la foto
+    }
+
+    $nuevoTelefono = $_POST['telefono'] ?? '';
+    $nuevoEstado = $_POST['estado'] ?? '';
+
+    // Actualizar los datos en la base de datos
+    if ($esAlumno) {
+        $sqlActualizar = "UPDATE ALUMNOS SET Tel = ?, Estado = ? WHERE Nombre_User = ?";
+        $stmtActualizar = $conexion->prepare($sqlActualizar);
+        $stmtActualizar->bind_param("sss", $nuevoTelefono, $nuevoEstado, $username);
+        $stmtActualizar->execute();
     } else {
-        error_log("No se encontraron datos de alumno ni profesor para el usuario $username");
-        // Aquí puedes manejar qué hacer si no se encuentra al alumno ni al profesor, por ejemplo, redirigir o mostrar un mensaje de error.
+        $sqlActualizar = "UPDATE PROFESORES SET Tel = ? WHERE Nombre_User = ?";
+        $stmtActualizar = $conexion->prepare($sqlActualizar);
+        $stmtActualizar->bind_param("ss", $nuevoTelefono, $username);
+        $stmtActualizar->execute();
     }
-}
 
-$rutaFotoGenerica = '../fotos_perfil/generica.png';
-$rutaFotoUsuario = '';
-$extensionesPermitidas = ['jpg', 'jpeg', 'png', 'gif'];
-
-foreach ($extensionesPermitidas as $extension) {
-    $rutaFotoUsuario = "../fotos_perfil/Foto_Perfil_" . $username . ".$extension";
-    if (file_exists($rutaFotoUsuario)) {
-        break;
-    }
-}
-
-// Verificación de la existencia de la foto del usuario
-if (!file_exists($rutaFotoUsuario)) {
-    error_log("Foto de perfil no encontrada para $username en ninguna de las extensiones permitidas.");
-    $rutaFotoUsuario = $rutaFotoGenerica;
-} else {
-    error_log("Foto de perfil encontrada: $rutaFotoUsuario");
+    // Redireccionar de nuevo al perfil después de la actualización
+    header("Location: perfil.php");
+    exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $nombre ? "$nombre $apellido1 $apellido2" : 'Perfil'; ?></title>
-    <link href="../CSS/perfil.css" rel="stylesheet">
+    <title>Modificar Perfil</title>
+    <link href="../CSS/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: cyan;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -112,11 +109,6 @@ if (!file_exists($rutaFotoUsuario)) {
                 <li class="nav-item">
                     <a class="nav-link" href="/Proyecto/PHP/ofertas.php">Ofertas</a>
                 </li>
-                <?php if ($rol == 'profesor'): ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="/Proyecto/PHP/altaOferta.php">Crear Oferta</a>
-                </li>
-                <?php endif; ?>
             </ul>
             <form class="d-flex">
                 <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar">
@@ -140,19 +132,33 @@ if (!file_exists($rutaFotoUsuario)) {
 </nav>
 
 <div class="container mt-5">
+    <h1>Modificar Perfil</h1>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card mb-4">
-                <div class="card-body text-center">
-                    <img src="<?php echo $rutaFotoUsuario; ?>" alt="Foto de perfil" class="perfil-img">
-                    <h5 class="card-title"><?php echo $nombre ? "$nombre $apellido1 $apellido2" : 'Nombre no disponible'; ?></h5>
-                    <p class="card-text"><strong>Teléfono:</strong> <?php echo $telefono; ?></p>
-                    <p class="card-text"><strong>Correo Electrónico:</strong> <?php echo $correo; ?></p>
-                    <?php if (!empty($estado)): ?>
-                        <p class="card-text"><strong>Estado:</strong> <?php echo $estado; ?></p>
-                    <?php endif; ?>
-                    <a href="modificaPerfil.php" class="btn btn-primary">Modificar Perfil</a>
-                    <a href="ofertaFavorita.php" class="btn btn-primary">Oferta Favorita</a>
+                <div class="card-body">
+                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" id="telefono" name="telefono" value="<?php echo htmlspecialchars($telefono, ENT_QUOTES, 'UTF-8'); ?>">
+                        </div>
+                        <?php if ($esAlumno): ?>
+                        <div class="mb-3">
+                            <label for="estado" class="form-label">Estado</label>
+                            <select class="form-select" id="estado" name="estado">
+                                <option value="Estudiando" <?php if ($estado === "Estudiando") echo "selected"; ?>>Estudiando</option>
+                                <option value="Trabajando" <?php if ($estado === "Trabajando") echo "selected"; ?>>Trabajando</option>
+                                <option value="Disponible" <?php if ($estado === "Disponible") echo "selected"; ?>>Disponible</option>
+                                <option value="No Molestar" <?php if ($estado === "No Molestar") echo "selected"; ?>>No Molestar</option>
+                            </select>
+                        </div>
+                        <?php endif; ?>
+                        <div class="mb-3">
+                            <label for="fotoPerfil" class="form-label">Cambiar Foto de Perfil</label>
+                            <input type="file" class="form-control" id="fotoPerfil" name="fotoPerfil">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
                 </div>
             </div>
         </div>
