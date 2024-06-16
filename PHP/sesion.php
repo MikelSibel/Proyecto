@@ -5,9 +5,10 @@ function comprobar_sesion()
     {
         session_start();
     }
-    
-    if (!isset($_SESSION['usuario']) || empty($_SESSION['usuario'])) {
-        header("Location: /Proyecto/PHP/iniciaSesion.php");        exit;
+    if (!isset($_SESSION['usuario']) || empty($_SESSION['usuario'])) 
+    {
+        header("Location: /Proyecto/PHP/iniciaSesion.php");        
+        exit;
     }
 }
 ?>

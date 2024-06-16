@@ -26,17 +26,9 @@ label {
     margin-bottom: 5px;
 }
 
-input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
 input,
 select {
-    width: 100%;
+    width: calc(100% - 16px);
     padding: 8px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
@@ -51,6 +43,7 @@ button {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    margin-top: 10px;
 }
 
 button:hover {
@@ -60,5 +53,6 @@ button:hover {
 .error {
     color: red;
     text-align: center;
+    margin-bottom: 10px;
     display: none;
 }

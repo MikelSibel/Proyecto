@@ -1,50 +1,28 @@
 <?php
-require_once 'conexion.php'; 
+include 'conexion.php';
 
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') 
+if (isset($_POST['enviar'])) 
 {
-    
-    $correo = $_POST['correo'];
-    $nombre = $_POST['nombre'];
-    $apellido1 = $_POST['apellido1'];
-    $apellido2 = $_POST['apellido2'];
-    $telefono = $_POST['telefono'];
-    $nombreUser = $_POST['nombreUser'];
-    $clave = $_POST['clave'];
-    $estado = $_POST['estado'];
+    $correo = mysqli_real_escape_string($conexion, $_POST['correo']);
+    $nombre = mysqli_real_escape_string($conexion, $_POST['nombre']);
+    $apellido1 = mysqli_real_escape_string($conexion, $_POST['apellido1']);
+    $apellido2 = mysqli_real_escape_string($conexion, $_POST['apellido2']);
+    $telefono = mysqli_real_escape_string($conexion, $_POST['telefono']);
+    $nombreUser = mysqli_real_escape_string($conexion, $_POST['nombreUser']);
+    $clave = mysqli_real_escape_string($conexion, $_POST['clave']);
+    $estado = mysqli_real_escape_string($conexion, $_POST['estado']);
 
-    
-    if ($correo && $nombre && $apellido1 && $apellido2 && $telefono && $nombreUser && $clave && $estado) 
+    $consulta = "INSERT INTO ALUMNOS (Correo_elec, Nombre, Apellido_1, Apellido_2, Tel, Nombre_User, Clave, Estado) 
+            VALUES ('$correo', '$nombre', '$apellido1', '$apellido2', '$telefono', '$nombreUser', '$clave', '$estado')";
+
+    if (mysqli_query($conexion, $consulta)) 
     {
-       
-        $consulta = $conexion->prepare("INSERT INTO ALUMNOS (correo, nombre, apellido1, apellido2, telefono, nombreUser, clave, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        
-        if ($consulta) 
-        {
-            
-            $consulta->bind_param("ssssisss", $correo, $nombre, $apellido1, $apellido2, $telefono, $nombreUser, $clave, $estado);
-            
-            if ($consulta->execute()) 
-            {
-                echo "<h1>Registro guardado exitosamente.</h1>";
-            } else {
-                echo "<h1>Error al ejecutar la consulta: " . $consulta->error . "</h1>";
-            }
-
-            $consulta->close();
-
-        }
-         else 
-        {
-            echo "<h1>Error al preparar la consulta: " . $conexion->error . "</h1>";
-        }
+        header("Location: iniciaSesion.php");
     } 
     else 
     {
-        echo "<h1>Todos los campos son obligatorios.</h1>";
+        echo "Error al insertar el registro: " . mysqli_error($conexion);
     }
-
-    $conexion->close();
+    mysqli_close($conexion);
 }
 ?>

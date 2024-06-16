@@ -1,5 +1,5 @@
 <?php
-require_once 'sesion.php';
+require 'sesion.php';
 comprobar_sesion();
 $_SESSION = array();
 session_destroy();

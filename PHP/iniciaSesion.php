@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Acceso</title>
+    <title>WikiOfertas</title>
     <link rel="stylesheet" href="../CSS/sesion.css">
 </head>
 <body>
@@ -65,12 +65,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 <button type="submit" title="Ingresar" name="submit">Inicia Sesión</button>
             </form>
             <div class="pie-form">
-                <a href="#">¿Perdiste tu contraseña?</a>
                 <a href="registrarse.php">¿No tienes Cuenta? Registrate</a>
             </div>
-        </div>
-        <div class="inferior">
-            <a href="../index.php">Volver</a>
         </div>
     </div>
 </div>
