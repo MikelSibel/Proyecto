@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS USUARIO(
     Nombre VARCHAR(20) NOT NULL,
     Apellido VARCHAR(20) NOT NULL,
     Fecha_naci DATE NOT NULL,
-    Es_admin BOOLEAN DEFAULT 0
+    Es_Admin BOOLEAN DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS PEDIDOS(
@@ -29,4 +29,23 @@ CREATE TABLE IF NOT EXISTS VALORACIONES(
     Estrellas INT NOT NULL,
     Fecha DATE NOT NULL,
     Descripcion VARCHAR(50)
+);
+
+CREATE TABLE IF NOT EXISTS PRODUCTO(
+    ID_Producto INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(20) NOT NULL,
+    Categoria ENUM('Camiseta','Pantalón','Sudadera','Accesiorios','Chaquetas') NOT NULL,
+    Precio DECIMAL(10,2) NOT NULL,
+    Es_Promocionado BOOLEAN DEFAULT 0,
+    Imagen VARCHAR(255) NOT NULL,
+    Descripcion VARCHAR(50)
+);
+
+CREATE TABLE IF NOT EXISTS STOCK(
+    ID_Stock INT AUTO_INCREMENT PRIMARY KEY,
+    Unidades INT NOT NULL,
+    Color ENUM('Negro','Blanco','Azul','Rojo','Verde') NOT NULL,
+    Talla ENUM('XXS','XS','S','M','L','XL','XXL','XXXL') NOT NULL,
+    ID_Producto INT NOT NULL,
+    FOREIGN KEY(ID_Producto) REFERENCES PRODUCTO(ID_Producto)
 );
