@@ -1,3 +1,17 @@
+<?php
+include 'conexionBD.php';
+
+$consulta = "SELECT * FROM PRODUCTO";
+$resultado = mysqli_query($conexion,$consulta);
+$productos = [];
+
+if (mysqli_num_rows($resultado)>0) {
+    while($row = mysqli_fetch_assoc($resultado)){
+        $productos[] = $row; 
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -94,54 +108,22 @@
         </div>
         <div class="col-md-9">
             <div class="row">
+                <?php
+                foreach ($productos as $producto) :
+                ?>
                 <div class="col-6 col-md-4 col-lg-3 mb-4">
-                    <a href="./producto.php" class="card text-decoration-none">
-                        <img src="/Tienda/imagenes/imagen1.png" class="card-img-top">
+                    <div  class="card text-decoration-none">
+                        <img src="<?php echo ($producto['Imagen1']); ?>" class="card-img-top">
                         <div class="card-body">
-                            <h5 class="card-title text-dark">Producto 1</h5>
-                            <p class="card-text text-muted">Descripción breve</p>
-                            <p class="card-text fw-bold">20.00€</p>
-                            <button class="btn btn-outline-primary btn-sm w-100">
-                                 Añadir a Favoritos
-                            </button>
-                            <button class="btn btn-outline-primary btn-sm w-100">
-                                Añadir a Carrito
-                            </button>
+                            <h5 class="card-title text-dark"><?php echo $producto['Nombre']?></h5>
+                            <p class="card-text fw-bold"><?php echo $producto['Precio']?>€</p>
+                            <a href="./producto.php" class="btn btn-outline-primary btn-sm w-100">
+                                Ver Más
+                            </a>
                         </div>
-                    </a>
+                    </div>
                 </div>
-                <div class="col-6 col-md-4 col-lg-3 mb-4">
-                    <a href="./producto.php" class="card text-decoration-none">
-                        <img src="/Tienda/imagenes/imagen2.png" class="card-img-top">
-                        <div class="card-body">
-                            <h5 class="card-title text-dark">Producto 2</h5>
-                            <p class="card-text text-muted">Descripción breve</p>
-                            <p class="card-text fw-bold">30.00€</p>
-                            <button class="btn btn-outline-primary btn-sm w-100">
-                                 Añadir a Favoritos
-                            </button>
-                            <button class="btn btn-outline-primary btn-sm w-100">
-                                Añadir a Carrito
-                            </button>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-6 col-md-4 col-lg-3 mb-4">
-                    <a href="./producto.php" class="card text-decoration-none">
-                        <img src="/Tienda/imagenes/imagen3.png" class="card-img-top">
-                        <div class="card-body">
-                            <h5 class="card-title text-dark">Producto 3</h5>
-                            <p class="card-text text-muted">Descripción breve</p>
-                            <p class="card-text fw-bold">25.00€</p>
-                            <button class="btn btn-outline-primary btn-sm w-100">
-                                Añadir a Favoritos
-                            </button>
-                            <button class="btn btn-outline-primary btn-sm w-100">
-                                Añadir a Carrito
-                            </button>
-                        </div>
-                    </a>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>

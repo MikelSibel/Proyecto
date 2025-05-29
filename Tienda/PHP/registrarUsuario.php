@@ -11,6 +11,8 @@
     <div class="contenedor">
         <form action="guardarRegistrarUsuario" method="POST">
             <h2>Registrarse</h2>
+            <label for="correo">DNI: </label>
+            <input type="text" require>
 
             <label for="correo">Correo Electrónico: </label>
             <input type="email" require>
@@ -27,11 +29,9 @@
             <label for="Fecha_naci">Fecha de Nacimiento: </label>
             <input type="date" require>
 
-            <label for="sexo">Sexo: </label>
-            <select name="sexo">
-                <option value="">Selecciona Sexo</option>
-                <option value="">PHP Falta</option>
-            </select>
+            <label for="direccion">Dirección: </label>
+            <input type="text" require>
+
 
             <button type="submit">Registrarse</button>
             <button type="reset">Borrar</button>
