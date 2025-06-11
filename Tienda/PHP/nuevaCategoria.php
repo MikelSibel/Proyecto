@@ -1,17 +1,3 @@
-<?php
-include 'conexionBD.php';
-
-$consulta = "SELECT * FROM CATEGORIAS";
-$resultado = mysqli_query($conexion,$consulta);
-$categorias = [];
-
-if (mysqli_num_rows($resultado)>0) {
-    while($row = mysqli_fetch_assoc($resultado)){
-        $categorias[] = $row; 
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -72,33 +58,9 @@ if (mysqli_num_rows($resultado)>0) {
 </nav>
 <div class="contenedor">
         <h1>Añadir Producto</h1>
-        <form action="guardarProducto.php" method="POST">
-            <label for="nombre">Nombre del Producto:</label>
+        <form action="guardarCategoria.php" method="POST">
+            <label for="nombre">Nueva Categoria:</label>
             <input type="text" require>
-
-            <label for="nombre">Categoria del Producto:</label>
-            <select name="categoria" id="categoria" required>
-                <option value="">Selecciona una categoría</option>
-                <?php foreach ($categorias as $categoria): ?>
-                    <option value="<?php echo$categoria['categorias']; ?>">
-                        <?php echo$categoria['categorias']; ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-            <label for="nombre">Precio del Producto:</label>
-            <input type="number" require>
-
-            <label for="nombre">Descripción del Producto:</label>
-            <input type="text" require>
-
-            <label for="nombre">Primera imagen del Producto:</label>
-            <input type="file" require>
-
-            <label for="nombre">Segunda imagen del Producto:</label>
-            <input type="file" >
-
-            <label for="nombre">Tercera imagen del Producto:</label>
-            <input type="file" >
 
             <button type="submit">Registrarse</button>
             <button type="reset">Borrar</button>
