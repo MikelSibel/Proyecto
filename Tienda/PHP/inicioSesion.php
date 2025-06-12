@@ -14,6 +14,19 @@
         <form action="comprobarUsuario.php" method="POST">
             <h1>Inicio de Sesión</h1>
             <hr>
+            <?php
+                if (isset($_GET['error'])) {
+                    ?>
+                    <p class="error">
+                        <?php
+                        echo $_GET['error'];
+                        ?>
+                    </p>
+            <?php      
+                }
+            ?>
+            
+            <hr>
             <i class="fa-solid fa-user-graduate"> </i>
             <label>Correo electronico:</label>
             <input type="text" name="Email" placeholder="Correo Electronico">
