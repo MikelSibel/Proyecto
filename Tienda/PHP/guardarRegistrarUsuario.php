@@ -5,7 +5,7 @@ include_once('conexionBD.php');
 if (isset($_POST['dni']) && isset($_POST['email']) && isset($_POST['nombre']) && isset($_POST['apellido']) && isset($_POST['clave']) && isset($_POST['fecha']) && isset($_POST['direccion'])) {
     function validar($dato){
         $dato = trim($dato);
-        $dato = stripcslashes($dato);
+        $dato = stripslashes($dato);
         $dato = htmlspecialchars($dato);
         return $dato;
     }

@@ -27,4 +27,95 @@
     text-align: center;
     padding: 5%;
 }
+.contenedor{
+    width: 75%;
+    padding: 1rem 1rem;
+    margin: 45px auto;
+    color: white;
+    background-color: black;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 20px 35px black;
+}
 
+form input{
+    width: 100%;
+    outline: none;
+    padding: .7rem;
+    background-color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+label{
+    color: blanchedalmond;
+    font-size: 18px;
+    padding: 10px;
+    font-weight: 300;
+}
+
+h1{
+    display: block;
+    border: 2px solid black;
+    width: 85%;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+h5{
+    color: blanchedalmond;
+}
+
+input{
+    display: block;
+    border: 2px solid black;
+    width: 100%;
+    border-radius: 10px;
+}
+
+.button{
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 15px;
+    outline: none;
+    border: none;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+}
+
+.button:hover{
+    background-color: blanchedalmond;
+    color: black;
+}
+
+.a{
+    float: left;
+    margin-left: 10px;
+    padding: .4rem;
+    text-decoration: none;
+    color: cyan;
+}
+.a:hover{
+    color: blanchedalmond;
+}
+
+.error{
+    background-color: red;
+    color: white;
+    padding: 10px;
+    width: 95%;
+    border-radius: 5px;
+    margin: 20px auto;
+}
+.success{
+    background-color: greenyellow;
+    color: black;
+    padding: 10px;
+    width: 95%;
+    border-radius: 5px;
+    margin: 20px auto;
+}

@@ -1,107 +1,135 @@
+<?php
+include 'conexionBD.php';
+
+if (empty($_GET['id'])) {
+    header('Location: categoria.php');
+    exit();
+}
+
+$id = $_GET['id'];
+$sql = mysqli_query($conexion, "SELECT * FROM PRODUCTO WHERE ID_Producto = '$id'");
+$resultado = mysqli_num_rows($sql);
+$producto = [];
+
+if ($resultado == 0) {
+    header('Location: categoria.php');
+    exit();
+} else {
+    $producto = mysqli_fetch_assoc($sql);
+}
+
+$sqlValoraciones = mysqli_query($conexion, "SELECT V.*, U.Nombre, U.Apellido FROM VALORACIONES V JOIN USUARIO U ON V.DNI = U.DNI WHERE V.ID_Producto = '$id' ORDER BY V.Fecha DESC");
+$valoraciones = [];
+if ($sqlValoraciones) {
+    while ($fila = mysqli_fetch_assoc($sqlValoraciones)) {
+        $valoraciones[] = $fila;
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Golden Cotton</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <link rel="stylesheet" href="/Tienda/CSS/style.css">
-</head>
+<?php include "header.php";?>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/Tienda/index.php">Golden Cotton</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <form class="d-flex mx-auto w-50">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-            <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/Tienda/PHP/perfil.php">Perfil </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/Tienda/PHP/favoritos.php">Favoritos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/Tienda/PHP/carrito.php">Carrito</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-<nav class="navbar navbar-expand-lg navbar-light bg-light mt-4 d-none d-md-none d-lg-block">
-    <div class="container-fluid">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="/Tienda/PHP/categoria.php">MUJER</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/Tienda/PHP/categoria.php">NIÑOS</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/Tienda/PHP/categoria.php">HOMBRE</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/Tienda/PHP/categoria.php">BEBE</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/Tienda/PHP/categoria.php">BELLEZA</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+
+<?php include "nav1.php";?>
+<?php include "nav2.php";?>
+
 <div class="container mt-5">
     <div class="row">
-        <div class="col-md-4 mb-4">
-            <img src="/Tienda/imagenes/imagen1.png" alt="Producto 1" class="img-fluid">
+        <div class="container mt-5">
+    <div class="row">
+        <div class="col-md-1 mb-1 d-flex flex-column" id="thumbs">
+            <?php if (!empty($producto['Imagen1'])) { ?>
+                <a href="<?php echo $producto['Imagen1']; ?>">
+                    <img src="<?php echo $producto['Imagen1']; ?>" class="img-thumbnail mb-2">
+                </a>
+            <?php } ?>
+            <?php if (!empty($producto['Imagen2'])) { ?>
+                <a href="<?php echo $producto['Imagen2']; ?>">
+                    <img src="<?php echo $producto['Imagen2']; ?>" class="img-thumbnail mb-2">
+                </a>
+            <?php } ?>
+            <?php if (!empty($producto['Imagen3'])) { ?>
+                <a href="<?php echo $producto['Imagen3']; ?>">
+                    <img src="<?php echo $producto['Imagen3']; ?>" class="img-thumbnail mb-2">
+                </a>
+            <?php } ?>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <img id="largeImg" src="<?php echo $producto['Imagen1']; ?>" class="img-fluid" alt="Imagen principal">
         </div>
         <div class="col-md-8 mb-4">
-            <h3 class="text-dark">Producto 1</h3>
-            <p class="text-muted">Descripción breve</p>
-            <p class="fw-bold">20.00€</p>
-            <button class="btn btn-outline-primary w-100">
-                Añadir a Favoritos
-            </button>
-            <button class="btn btn-outline-primary w-100">
-                Añadir a Carrito
-            </button>
-        </div>
-    </div>
+            <h3 class="text-dark"><?php echo $producto['Nombre'];?></h3>
+            <p class="text-muted"><?php echo $producto['Descripcion'];?></p>
+            <p class="fw-bold"><?php echo $producto['Precio'];?>€</p>
+            <button id="anadirCarrito" class="btn btn-outline-primary btn-sm w-100" data-id="<?php echo $producto['ID_Producto']; ?>" data-nombre="<?php echo $producto['Nombre']; ?>" data-descripcion="<?php echo $producto['Descripcion']; ?>" data-precio="<?php echo $producto['Precio']; ?>" data-imagen="<?php echo $producto['Imagen1']; ?>">Añadir a Carrito</button>
+            <?php 
+                if (session_status() == PHP_SESSION_NONE) {
+                    session_start();
+                }
 
-    <div class="row mt-5">
-        <div class="col-12">
-            <h5>Valoración</h5>
-            <div class="d-flex align-items-center">
-                
+                if (isset($_SESSION['activa']) && $_SESSION['activa'] == true) { 
+            ?>
+            <a href="./guardarFavorito.php?id=<?php echo $producto['ID_Producto']; ?>" class="btn btn-outline-primary btn-sm w-100">
+                Añadir a Favoritos
+            </a>
+            <br>
+            <br>
+            <?php } ?>
+            <?php
+                if (isset($_GET['error'])) {
+                    ?>
+                    <p class="error">
+                        <?php
+                        echo $_GET['error'];
+                        ?>
+                    </p>
+            <?php      
+                }
+            ?>
+            <?php
+                if (isset($_GET['success'])) {
+                    ?>
+                    <p class="success">
+                        <?php
+                        echo $_GET['success'];
+                        ?>
+                    </p>
+            <?php      
+                }
+            ?>
+        </div>
+    </div>
+    <h3>Valoraciones</h3>
+    <?php foreach ($valoraciones as $val) { 
+    $estrellas = (int)$val['Estrellas'];
+    ?>
+    <div class="card mb-3">
+        <div class="col-md-3 mb-4">
+            <div class="mb-3 text-warning">
+                <?php
+                    for ($i = 0; $i < $estrellas; $i++) {
+                        echo '★';
+                    }
+                    for ($i = $estrellas; $i < 5; $i++) {
+                        echo '☆';
+                    }
+                ?>
             </div>
+            <p><?php echo htmlspecialchars($val['Comentario']); ?></p>
+            <small class="text-muted">Usuario: <?php echo htmlspecialchars($val['Nombre'] . ' ' . $val['Apellido']); ?></small><br>
+            <small class="text-muted">Fecha: <?php echo htmlspecialchars($val['Fecha']); ?></small>
         </div>
     </div>
+    <?php } ?>
+
 </div>
-<footer class="bg-light text-center py-4">
-    <div class="container">
-        <h5>Síguenos en nuestras redes sociales</h5>
-        <div class="social-icons">
-            <a href="https://facebook.com" class="btn btn-primary btn-sm" target="_blank">
-                Facebook
-            </a>
-            <a href="https://github.com" class="btn btn-dark btn-sm" target="_blank">
-                GitHub
-            </a>
-            <a href="https://instagram.com" class="btn btn-danger btn-sm" target="_blank">
-                Instagram
-            </a>
-            <a href="https://youtube.com" class="btn btn-danger btn-sm" target="_blank">
-                 YouTube
-            </a>
-        </div>
-    </div>
-</footer>
+
+<?php include "footer.php";?>
+<script src="../JS/cambiarImagen.js"></script>
+<script src="../JS/anadirCarrito.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

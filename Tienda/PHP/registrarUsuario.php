@@ -1,13 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="/Tienda/CSS/inicioSesion.css">
-    <title>Golden Cotton</title>
-</head>
+<html lang="es">
+<?php include "header.php";?>
 <body>
     <div class="contenedor">
         <form action="guardarRegistrarUsuario.php" method="POST">
@@ -34,30 +27,30 @@
             <?php      
                 }
             ?>
-            <label for="correo">DNI: </label>
-            <input type="text" placeholder="DNI" name="dni" require>
+            <label for="DNI">DNI: </label>
+            <input type="text" placeholder="DNI" name="dni">
 
             <label for="correo">Correo Electrónico: </label>
-            <input type="email" placeholder="Correo Electronico" name="email" require>
+            <input type="email" placeholder="Correo Electronico" name="email" >
 
             <label for="nombre">Nombre: </label>
-            <input type="text" placeholder="Nombre" name="nombre" require>
+            <input type="text" placeholder="Nombre" name="nombre">
 
             <label for="apellido">Apellido: </label>
-            <input type="text" placeholder="Apellido" name="apellido" require>
+            <input type="text" placeholder="Apellido" name="apellido">
 
             <label for="clave">Contraseña: </label>
-            <input type="password" placeholder="Contraseña" name="clave" require>
+            <input type="password" placeholder="Contraseña" name="clave" >
 
             <label for="Fecha_naci">Fecha de Nacimiento: </label>
-            <input type="date" name="fecha" require>
+            <input type="date" name="fecha">
 
             <label for="direccion">Dirección: </label>
-            <input type="text" placeholder="Dirección" name="direccion" require>
+            <input type="text" placeholder="Dirección" name="direccion">
 
 
             <button type="submit" class="button">Registrarse</button>
-            <a href="inicioSesion.php">Atras</a>
+            <a class="a" href="inicioSesion.php">Atras</a>
         </form>
     </div>
 </body>

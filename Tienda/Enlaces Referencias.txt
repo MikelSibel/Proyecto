@@ -1,3 +1,12 @@
 BASE de DATOS: https://www.youtube.com/watch?v=ZRxremhHblM
 CARD de PRODUCTOS: https://www.youtube.com/watch?v=U34f3zxM_1c
 INICIO de SESION y REGISTRARSE https://www.youtube.com/watch?v=qfF6LcSIvhY https://www.youtube.com/watch?v=O https://www.youtube.com/watch?v=r87WaWL-nCs750f-NzKHc
+videos de una tienda como referencia https://www.youtube.com/watch?v=NqJknlP0RkY&list=PL3b9xmg86NTLHvul_VxsDda31xH6u8OdI&index=27
+limitar los decimales de precio https://stackoverflow.com/questions/34057595/allow-2-decimal-places-in-input-type-number
+imagenes https://getbootstrap.com/docs/5.0/content/images/
+borrar imagenes https://www.w3schools.com/php/func_filesystem_unlink.asp
+cambiar imagen https://github.com/MikelSibel/DAW/blob/main/Tema%204/Galeria%20de%20imagenes/index.html
+truncar nombres https://getbootstrap.esdocu.com/docs/5.3/helpers/text-truncation/
+carrito https://programadorwebvalencia.com/javascript-ejemplo-carrito-de-compra/
+valoracion https://w3.unpocodetodo.info/css3/estrellas.php#:~:text=El%20HTML,(%20%E2%98%85%20)
+iconos https://es.piliapp.com/symbol/star/
